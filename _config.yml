@@ -1,31 +1,47 @@
-# Welcome to Jekyll!
-#
-# This config file is meant for settings that affect your whole blog, values
-# which you are expected to set up once and rarely need to edit after that.
-# For technical reasons, this file is *NOT* reloaded automatically when you use
-# 'jekyll serve'. If you change this file, please restart the server process.
-
 # Site settings
-title:        jekyllDecent
-subtitle:     Example Blog
-description:  This is the jekyllTheme example blog. It only exists to demonstrate how the theme looks and feels.
-keywords:     demo theme example github jekyll features
-language:     "en" # default language of the blog. Language codes: http://www.w3schools.com/tags/ref_language_codes.asp
-
-baseurl:      "" # the subpath of your site, e.g. /blog
-url:          "http://jwillmer.github.io/jekyllDecent" # the base hostname & protocol for your site. Have a look at robots.txt as well!
-permalink:    /blog/:categories/:title
-cover:        /assets/mountain-cover.jpg
+title: Henry Jekyll
 
 # Build settings
 markdown: kramdown
-kramdown:
-  syntax_highlighter_opts:
-    disable: true
-include: ['_pages']
-exclude: [vendor]
-gems:
-  - jekyll-mentions
-  - jekyll-feed
-  - jekyll-sitemap
-  - jekyll-redirect-from
+permalink: pretty
+
+favicon: "/assets/img/temp_chem.jpg"
+
+port: 3000
+url: http://localhost:3000
+
+sass:
+  sass_dir: assets/css
+  style: :nested
+
+# Add bibliography
+gems: ['jekyll/scholar']
+
+scholar:
+  style: assets/bib/_ieee-with-url.csl
+  locale: en
+
+  sort_by: none
+  order: ascending
+
+  group_by: none
+  group_order: ascending
+
+  source: assets/bib
+  bibliography: _mybib.bib
+  bibliography_template: "{{reference}}"
+
+  replace_strings: true
+  join_strings:    true
+
+  use_raw_bibtex_entry: false
+  bibtex_filters:
+  - superscript
+  - latex
+  - HTML
+
+  details_dir:    bibliography
+  details_layout: bibtex.html
+  details_link:   Details
+
+  query: "@*"
