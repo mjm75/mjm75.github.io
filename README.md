@@ -1,79 +1,232 @@
-Dr. Jekyll: A scholarly website template.
-===================
+# Receipt Analyzer 📄💰
 
-This Jekyll template is meant for young (or established) scholars who would like to set up a website quickly and have it remain stable in the future.
+A powerful web application that analyzes grocery store receipts using OCR (Optical Character Recognition) to automatically extract items, prices, and quantities, then categorizes them for expense tracking and budgeting insights.
 
-The template includes a built in bibliography using bibtex format that you can use to update your incredibly long publication list (knock on wood).
+## Features ✨
 
-___
+- **Smart OCR Processing**: Upload receipt images and automatically extract text using advanced OCR
+- **Intelligent Parsing**: Identifies items, quantities, and prices from receipt text
+- **Auto-Categorization**: Automatically sorts items into categories (fruits, vegetables, meat, dairy, etc.)
+- **Expense Tracking**: Track spending over time with beautiful charts and analytics
+- **Category Analysis**: See spending breakdown by food categories
+- **Modern Web Interface**: Clean, responsive design with drag-and-drop file upload
+- **Data Persistence**: SQLite database stores all receipt data for historical analysis
 
-## Key Elements
-The template comes with the following features:
+## Categories Supported 🏷️
 
-1. Easily adjust the title, url, and favicon in the `config.yml` file.
-2. Change the "About Me" section, the "Courses" list, and "Contact Me" info in the `_data/settings.yml` file.
-3. A bibliography can be built easily using a `.bib` file and `bibtex`.
-4. Easily create course pages and host files for your classes.
+- **Fruits**: Apples, bananas, oranges, berries, etc.
+- **Vegetables**: Carrots, lettuce, tomatoes, peppers, etc.
+- **Meat**: Chicken, beef, pork, fish, seafood
+- **Dairy**: Milk, cheese, yogurt, eggs
+- **Grains**: Bread, rice, pasta, cereals
+- **Beverages**: Water, juice, soda, coffee, tea
+- **Snacks**: Chips, nuts, candy, cookies
+- **Frozen**: Frozen meals, ice cream, frozen vegetables
+- **Pantry**: Oils, spices, condiments, baking supplies
+- **Canned Goods**: Canned vegetables, soups, sauces
+- **Personal Care**: Shampoo, soap, toothpaste
+- **Household**: Cleaning supplies, paper products
+- **Bakery**: Fresh baked goods, pastries
+- **Other**: Miscellaneous items
 
----
-## Use
-To use this template, you need to build the site locally. The [Jekyll-Scholar](https://github.com/inukshuk/jekyll-scholar) plugin is not supported by Github.
+## Installation 🚀
 
-Here is a brief description of the necessary steps to customize your site:
+### Prerequisites
 
-1. Download the repository.
-2. Update the `config.yml` file with your preferred settings for title, url, etc.
-3. Update the `_data/settings.yml` file with your "About Me" blurb, your course list, and your contact information.
-4. For each course, you can either link to an external site or create a new page. To create a new course page, copy the `temp_course` folder and update the necessary information (add lecture slides, change the front matter in the `index.html` file, change folder names, etc.).
-5. Put any files (e.g. CV, pdf's of articles, etc.) in the `assets/files` folder.
-6. If you would like to change the bibliography style, add your custom `.csl` file to the `assets\bib` folder.
-7. Update the `_mybib.bib` file to include all of your amazing articles.
-8. Change the bio-photo (200 x 220) and the background image (2634 x 1756 ... although you don't necessarily need such a high resolution image).
-9. Update the colors in `assets/css/2-base/_vars.sass`. In particular, `accent-color` is the most used (if not the only...).
+- Python 3.8 or higher
+- Tesseract OCR engine
 
-Once the site looks the way you want it, you need to push it to Github. To build the site locally and push the necessary files, do the following (note: this assumes you already have a Github pages site and associated local repository. If not, check out [this page for directions](https://pages.github.com/).):
+### Install Tesseract OCR
 
-0. Ensure that your customized DrJekyll folder is ***outside*** of the Github pages repository.
-1. Copy your local github repository to a safe place (because we are going to delete it).
-2. `cd` into your local repository and delete the files:
+**Ubuntu/Debian:**
+```bash
+sudo apt-get update
+sudo apt-get install tesseract-ocr
+```
 
-  ```
-  git rm -rf .
-  ```
-3. `cd` into your DrJekyll folder and build it using Jekyll:
+**macOS:**
+```bash
+brew install tesseract
+```
 
-  ```
-  jekyll build
-  ```
-4. Using either your GUI or the command line, copy the contents of the `DrJekyll/_site` folder into your local Github Pages repository.
-5. Create an empty file in your local Github Pages repository titled `.nojekyll`.
-6. Follow your usual Github push steps. For me I run the following:
+**Windows:**
+Download and install from: https://github.com/UB-Mannheim/tesseract/wiki
 
-  ```
-  git status
-  git add --all
-  git commit -m "Publishing my sweet website."
-  git push origin master
-  ```
+### Install the Application
 
-Now, enjoy your handiwork!
+1. **Clone or download the application files**
 
----
+2. **Install Python dependencies:**
+```bash
+pip install -r requirements.txt
+```
 
-## A Note On The bibliography
-The included sample `.bib` file includes the following bibliography entry:
+3. **Run the application:**
+```bash
+python app.py
+```
+
+4. **Access the application:**
+Open your web browser and go to `http://localhost:5000`
+
+## Usage 📱
+
+### 1. Upload a Receipt
+- Click "Upload Receipt" in the navigation
+- Drag and drop an image file or click to browse
+- Supported formats: JPG, PNG, GIF, BMP, TIFF
+- Click "Analyze Receipt" to process
+
+### 2. View Results
+- See extracted items with categories, quantities, and prices
+- Review the category breakdown chart
+- Check the raw OCR text if needed
+
+### 3. Browse Your Receipts
+- View all uploaded receipts in "My Receipts"
+- Click on any receipt to see detailed breakdown
+- Delete receipts you no longer need
+
+### 4. Analyze Spending
+- Visit the "Analytics" page for insights
+- View spending by category with pie charts
+- See spending trends over time with line charts
+- Filter by different time periods (7 days, 30 days, 3 months, 1 year)
+
+## Tips for Best Results 📸
+
+1. **Good Lighting**: Ensure receipts are well-lit and clearly visible
+2. **Avoid Shadows**: Keep the receipt flat and avoid shadows or glare
+3. **Clear Images**: Use high-resolution, non-blurry images
+4. **Complete Receipt**: Include the entire receipt in the frame
+5. **Straight Orientation**: Keep receipts as straight as possible
+
+## Project Structure 📁
 
 ```
-@article{jekyll1885schizo,
-  title={Home Remedies for Multiple Personality Disorders},
-  author={Jekyll, Henry},
-  year={1885},
-  URL={https://alongsite.com/HOO.pdfLINK:arXiv;https://alongsite.com/BOO.pdfLINK:NBER;/assets/files/paper.pdfLINK:PDF}
-}
+receipt-analyzer/
+├── app.py                 # Main Flask application
+├── receipt_parser.py      # OCR text parsing logic
+├── item_categorizer.py    # Item categorization system
+├── database.py           # SQLite database management
+├── requirements.txt      # Python dependencies
+├── templates/           # HTML templates
+│   ├── base.html
+│   ├── index.html
+│   ├── upload.html
+│   ├── receipt_detail.html
+│   ├── receipts.html
+│   └── analytics.html
+├── static/
+│   └── css/
+│       └── style.css    # Custom CSS styles
+├── uploads/             # Uploaded receipt images (created automatically)
+└── receipts.db         # SQLite database (created automatically)
 ```
-This looks like a typical entry, ***except the URL***. If your paper is hosted in several locations, you can link to all of those places using this line.
 
-The format is `urlLINK:linktext;urlLINK:linktext`, where you need to replace the link `url` and the `linktext` with whatever you would like. Each url needs to be seperated by a semicolon, `;`.
+## Technical Details 🔧
 
-## Tracking
-If you are a self obsessed sociopath or insecure graduate student, like myself, you can easily add analytics by creating a Google Tag Manager account and pasting the container code onto any of the `index.html` pages. Another nifty idea would to be to create an include for analytics, but since the site is quite simple, I'll leave this to you.
+### OCR Processing
+- Uses **pytesseract** for text extraction
+- Applies image preprocessing with OpenCV for better OCR accuracy
+- Handles various image formats and qualities
+
+### Text Parsing
+- Regular expressions to identify prices and quantities
+- Smart filtering to remove non-item lines (totals, taxes, headers)
+- Handles multiple price and quantity formats
+
+### Categorization
+- Rule-based categorization with 800+ predefined items
+- Fuzzy string matching for similar items
+- Fallback to keyword-based categorization
+- Easily extensible category system
+
+### Database Schema
+```sql
+-- Receipts table
+receipts (id, filename, upload_date, raw_text, store_name, total_amount, item_count)
+
+-- Items table  
+items (id, receipt_id, name, category, quantity, unit_price, total_price, raw_line)
+
+-- Categories table
+categories (id, name, description, color)
+```
+
+## Customization 🔧
+
+### Adding New Categories
+Edit `item_categorizer.py` and add items to the `category_mappings` dictionary:
+
+```python
+'new_category': [
+    'item1', 'item2', 'item3'
+]
+```
+
+### Modifying Parsing Rules
+Adjust patterns in `receipt_parser.py`:
+
+```python
+# Add new price patterns
+self.price_patterns.append(r'new_pattern')
+
+# Add new quantity patterns  
+self.quantity_patterns.append(r'new_qty_pattern')
+```
+
+### Changing UI Colors
+Modify color schemes in `static/css/style.css` and update category colors.
+
+## Troubleshooting 🔍
+
+### Common Issues
+
+**OCR not working:**
+- Ensure Tesseract is properly installed and in your PATH
+- Try preprocessing images (better lighting, contrast)
+- Check that pytesseract can find the Tesseract executable
+
+**Poor parsing results:**
+- Use clearer receipt images
+- Check if receipt format is supported
+- Review parsing patterns in `receipt_parser.py`
+
+**Database errors:**
+- Ensure write permissions in the application directory
+- Check SQLite installation
+- Delete `receipts.db` to reset the database
+
+### Getting Help
+- Check the console output for error messages
+- Review the raw OCR text to understand parsing issues
+- Test with different receipt formats and stores
+
+## Contributing 🤝
+
+Feel free to contribute by:
+- Adding support for new receipt formats
+- Improving OCR accuracy
+- Expanding the categorization system
+- Enhancing the user interface
+- Adding new analytics features
+
+## License 📄
+
+This project is open source and available under the MIT License.
+
+## Future Enhancements 🚀
+
+- **Mobile App**: Native mobile applications for iOS and Android
+- **Receipt Templates**: Support for specific store receipt formats
+- **Budget Alerts**: Notifications when spending exceeds budgets
+- **Export Features**: Export data to CSV, PDF, or other formats
+- **Multi-User Support**: User accounts and data separation
+- **Advanced Analytics**: Predictive spending analysis and recommendations
+- **Barcode Recognition**: Extract product information from barcodes
+- **Integration**: Connect with banking APIs and expense management tools
+
+---
+
+**Happy receipt tracking!** 📊💡

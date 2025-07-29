@@ -1,0 +1,183 @@
+{% extends "base.html" %}
+
+{% block title %}Receipt Analyzer - Home{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="hero-section bg-primary text-white rounded p-5 mb-4">
+            <div class="text-center">
+                <h1 class="display-4 mb-3">
+                    <i class="fas fa-receipt me-3"></i>Receipt Analyzer
+                </h1>
+                <p class="lead mb-4">
+                    Upload your grocery receipts and automatically track your expenses by category. 
+                    Get insights into your spending patterns and manage your budget effectively.
+                </p>
+                <a href="{{ url_for('upload_receipt') }}" class="btn btn-light btn-lg me-3">
+                    <i class="fas fa-upload me-2"></i>Upload Your First Receipt
+                </a>
+                <a href="{{ url_for('analytics') }}" class="btn btn-outline-light btn-lg">
+                    <i class="fas fa-chart-line me-2"></i>View Analytics
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-4">
+        <div class="card h-100 feature-card">
+            <div class="card-body text-center">
+                <i class="fas fa-camera fa-3x text-primary mb-3"></i>
+                <h5 class="card-title">Smart OCR</h5>
+                <p class="card-text">
+                    Advanced optical character recognition extracts text from your receipt images automatically.
+                </p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card h-100 feature-card">
+            <div class="card-body text-center">
+                <i class="fas fa-tags fa-3x text-success mb-3"></i>
+                <h5 class="card-title">Auto Categorization</h5>
+                <p class="card-text">
+                    Items are automatically sorted into categories like fruits, vegetables, meat, dairy, and more.
+                </p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card h-100 feature-card">
+            <div class="card-body text-center">
+                <i class="fas fa-chart-pie fa-3x text-info mb-3"></i>
+                <h5 class="card-title">Expense Tracking</h5>
+                <p class="card-text">
+                    Visualize your spending patterns with beautiful charts and detailed analytics.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-info-circle me-2"></i>How It Works
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="step-item mb-3">
+                            <div class="step-number">1</div>
+                            <div class="step-content">
+                                <h6>Upload Receipt Image</h6>
+                                <p class="text-muted">Take a photo or scan your grocery receipt and upload it to the app.</p>
+                            </div>
+                        </div>
+                        <div class="step-item mb-3">
+                            <div class="step-number">2</div>
+                            <div class="step-content">
+                                <h6>OCR Processing</h6>
+                                <p class="text-muted">Our OCR engine extracts text and identifies items, quantities, and prices.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="step-item mb-3">
+                            <div class="step-number">3</div>
+                            <div class="step-content">
+                                <h6>Auto Categorization</h6>
+                                <p class="text-muted">Items are automatically categorized into food groups and product types.</p>
+                            </div>
+                        </div>
+                        <div class="step-item mb-3">
+                            <div class="step-number">4</div>
+                            <div class="step-content">
+                                <h6>Track & Analyze</h6>
+                                <p class="text-muted">View your spending trends and make informed budgeting decisions.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-list me-2"></i>Supported Categories
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="category-grid">
+                    <span class="badge bg-danger me-1 mb-2">Fruits</span>
+                    <span class="badge bg-success me-1 mb-2">Vegetables</span>
+                    <span class="badge bg-warning me-1 mb-2">Dairy</span>
+                    <span class="badge bg-info me-1 mb-2">Meat</span>
+                    <span class="badge bg-primary me-1 mb-2">Grains</span>
+                    <span class="badge bg-secondary me-1 mb-2">Beverages</span>
+                    <span class="badge bg-dark me-1 mb-2">Snacks</span>
+                    <span class="badge bg-light text-dark me-1 mb-2">Frozen</span>
+                    <span class="badge bg-success me-1 mb-2">Pantry</span>
+                    <span class="badge bg-warning me-1 mb-2">Canned Goods</span>
+                    <span class="badge bg-info me-1 mb-2">Personal Care</span>
+                    <span class="badge bg-primary me-1 mb-2">Household</span>
+                    <span class="badge bg-danger me-1 mb-2">Bakery</span>
+                </div>
+                <p class="text-muted mt-3 mb-0">
+                    <small>And many more categories with intelligent matching!</small>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<style>
+.hero-section {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.feature-card {
+    transition: transform 0.3s ease;
+}
+
+.feature-card:hover {
+    transform: translateY(-5px);
+}
+
+.step-item {
+    display: flex;
+    align-items: flex-start;
+}
+
+.step-number {
+    background: #007bff;
+    color: white;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    margin-right: 15px;
+    flex-shrink: 0;
+}
+
+.step-content h6 {
+    margin-bottom: 5px;
+}
+
+.category-grid {
+    line-height: 2;
+}
+</style>
+{% endblock %}
