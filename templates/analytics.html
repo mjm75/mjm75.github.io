@@ -1,0 +1,390 @@
+{% extends "base.html" %}
+
+{% block title %}Analytics - Receipt Analyzer{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h2 class="mb-4">
+            <i class="fas fa-chart-pie me-2"></i>Expense Analytics
+        </h2>
+    </div>
+</div>
+
+<!-- Summary Cards -->
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card bg-primary text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h6 class="card-title">This Month</h6>
+                        <h4 class="mb-0" id="thisMonthTotal">$0.00</h4>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="fas fa-calendar-month fa-2x opacity-50"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-success text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h6 class="card-title">Last 30 Days</h6>
+                        <h4 class="mb-0" id="last30DaysTotal">$0.00</h4>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="fas fa-chart-line fa-2x opacity-50"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-info text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h6 class="card-title">Avg per Receipt</h6>
+                        <h4 class="mb-0" id="avgPerReceipt">$0.00</h4>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="fas fa-receipt fa-2x opacity-50"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-warning text-white">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h6 class="card-title">Top Category</h6>
+                        <h6 class="mb-0" id="topCategory">Loading...</h6>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="fas fa-crown fa-2x opacity-50"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Charts Row -->
+<div class="row mb-4">
+    <div class="col-lg-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-chart-pie me-2"></i>Spending by Category
+                </h5>
+            </div>
+            <div class="card-body">
+                <canvas id="categoryChart" height="300"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-chart-line me-2"></i>Spending Over Time
+                </h5>
+            </div>
+            <div class="card-body">
+                <canvas id="timeChart" height="300"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Detailed Tables -->
+<div class="row">
+    <div class="col-lg-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-tags me-2"></i>Category Breakdown
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-sm">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Category</th>
+                                <th class="text-center">Items</th>
+                                <th class="text-end">Total</th>
+                                <th class="text-end">%</th>
+                            </tr>
+                        </thead>
+                        <tbody id="categoryBreakdown">
+                            <tr>
+                                <td colspan="4" class="text-center">Loading...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-clock me-2"></i>Recent Items
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-sm">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Item</th>
+                                <th>Category</th>
+                                <th class="text-end">Price</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody id="recentItems">
+                            <tr>
+                                <td colspan="4" class="text-center">Loading...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Time Period Selector -->
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <h6 class="card-title">
+                    <i class="fas fa-filter me-2"></i>Filter by Time Period
+                </h6>
+                <div class="btn-group" role="group">
+                    <input type="radio" class="btn-check" name="timePeriod" id="period7" value="7" checked>
+                    <label class="btn btn-outline-primary" for="period7">Last 7 Days</label>
+                    
+                    <input type="radio" class="btn-check" name="timePeriod" id="period30" value="30">
+                    <label class="btn btn-outline-primary" for="period30">Last 30 Days</label>
+                    
+                    <input type="radio" class="btn-check" name="timePeriod" id="period90" value="90">
+                    <label class="btn btn-outline-primary" for="period90">Last 3 Months</label>
+                    
+                    <input type="radio" class="btn-check" name="timePeriod" id="period365" value="365">
+                    <label class="btn btn-outline-primary" for="period365">Last Year</label>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+let categoryChart = null;
+let timeChart = null;
+
+document.addEventListener('DOMContentLoaded', function() {
+    loadAnalytics();
+    
+    // Listen for time period changes
+    document.querySelectorAll('input[name="timePeriod"]').forEach(radio => {
+        radio.addEventListener('change', function() {
+            loadAnalytics(this.value);
+        });
+    });
+});
+
+function loadAnalytics(days = 30) {
+    fetch(`/api/spending_data?days=${days}`)
+        .then(response => response.json())
+        .then(data => {
+            updateSummaryCards(data);
+            updateCategoryChart(data.category_spending);
+            updateTimeChart(data.time_spending);
+            updateCategoryTable(data.category_spending);
+            updateRecentItems(data.recent_items || []);
+        })
+        .catch(error => {
+            console.error('Error loading analytics:', error);
+        });
+}
+
+function updateSummaryCards(data) {
+    const totalSpent = data.category_spending.reduce((sum, cat) => sum + cat.total_spent, 0);
+    const receiptCount = data.category_spending.reduce((sum, cat) => sum + cat.item_count, 0);
+    const avgPerReceipt = receiptCount > 0 ? totalSpent / receiptCount : 0;
+    const topCategory = data.category_spending.length > 0 ? data.category_spending[0].category : 'None';
+
+    document.getElementById('last30DaysTotal').textContent = `$${totalSpent.toFixed(2)}`;
+    document.getElementById('avgPerReceipt').textContent = `$${avgPerReceipt.toFixed(2)}`;
+    document.getElementById('topCategory').textContent = topCategory.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase());
+}
+
+function updateCategoryChart(categoryData) {
+    const ctx = document.getElementById('categoryChart').getContext('2d');
+    
+    if (categoryChart) {
+        categoryChart.destroy();
+    }
+    
+    if (categoryData.length === 0) {
+        ctx.font = '16px Arial';
+        ctx.fillStyle = '#6c757d';
+        ctx.textAlign = 'center';
+        ctx.fillText('No data available', ctx.canvas.width / 2, ctx.canvas.height / 2);
+        return;
+    }
+    
+    categoryChart = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: categoryData.map(cat => cat.category.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())),
+            datasets: [{
+                data: categoryData.map(cat => cat.total_spent),
+                backgroundColor: [
+                    '#e74c3c', '#27ae60', '#f39c12', '#3498db', '#9b59b6',
+                    '#1abc9c', '#34495e', '#95a5a6', '#e67e22', '#d35400',
+                    '#8e44ad', '#2c3e50', '#16a085'
+                ],
+                borderWidth: 2,
+                borderColor: '#fff'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom'
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            const value = context.parsed;
+                            const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                            const percentage = ((value / total) * 100).toFixed(1);
+                            return context.label + ': $' + value.toFixed(2) + ' (' + percentage + '%)';
+                        }
+                    }
+                }
+            }
+        }
+    });
+}
+
+function updateTimeChart(timeData) {
+    const ctx = document.getElementById('timeChart').getContext('2d');
+    
+    if (timeChart) {
+        timeChart.destroy();
+    }
+    
+    if (timeData.length === 0) {
+        ctx.font = '16px Arial';
+        ctx.fillStyle = '#6c757d';
+        ctx.textAlign = 'center';
+        ctx.fillText('No data available', ctx.canvas.width / 2, ctx.canvas.height / 2);
+        return;
+    }
+    
+    timeChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: timeData.map(day => new Date(day.date).toLocaleDateString()),
+            datasets: [{
+                label: 'Daily Spending',
+                data: timeData.map(day => day.total),
+                borderColor: '#3498db',
+                backgroundColor: 'rgba(52, 152, 219, 0.1)',
+                fill: true,
+                tension: 0.4
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        callback: function(value) {
+                            return '$' + value.toFixed(2);
+                        }
+                    }
+                }
+            },
+            plugins: {
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return 'Spent: $' + context.parsed.y.toFixed(2);
+                        }
+                    }
+                }
+            }
+        }
+    });
+}
+
+function updateCategoryTable(categoryData) {
+    const tbody = document.getElementById('categoryBreakdown');
+    const total = categoryData.reduce((sum, cat) => sum + cat.total_spent, 0);
+    
+    if (categoryData.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="4" class="text-center">No data available</td></tr>';
+        return;
+    }
+    
+    tbody.innerHTML = categoryData.map(cat => {
+        const percentage = total > 0 ? ((cat.total_spent / total) * 100).toFixed(1) : '0.0';
+        const categoryName = cat.category.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase());
+        
+        return `
+            <tr>
+                <td>
+                    <span class="badge" style="background-color: ${cat.color || '#3498db'}">${categoryName}</span>
+                </td>
+                <td class="text-center">${cat.item_count}</td>
+                <td class="text-end">$${cat.total_spent.toFixed(2)}</td>
+                <td class="text-end">${percentage}%</td>
+            </tr>
+        `;
+    }).join('');
+}
+
+function updateRecentItems(recentItems) {
+    const tbody = document.getElementById('recentItems');
+    
+    if (recentItems.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="4" class="text-center">No recent items</td></tr>';
+        return;
+    }
+    
+    tbody.innerHTML = recentItems.slice(0, 10).map(item => {
+        const categoryName = item.category.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase());
+        const date = new Date(item.date).toLocaleDateString();
+        
+        return `
+            <tr>
+                <td>${item.name}</td>
+                <td><span class="badge bg-secondary">${categoryName}</span></td>
+                <td class="text-end">$${item.price.toFixed(2)}</td>
+                <td><small class="text-muted">${date}</small></td>
+            </tr>
+        `;
+    }).join('');
+}
+</script>
+{% endblock %}

@@ -1,0 +1,297 @@
+{% extends "base.html" %}
+
+{% block title %}Receipt #{{ receipt.id }} - Receipt Analyzer{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2>
+                <i class="fas fa-receipt me-2"></i>Receipt #{{ receipt.id }}
+            </h2>
+            <div>
+                <a href="{{ url_for('list_receipts') }}" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left me-2"></i>Back to Receipts
+                </a>
+                <a href="{{ url_for('upload_receipt') }}" class="btn btn-primary">
+                    <i class="fas fa-plus me-2"></i>Upload Another
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-list me-2"></i>Parsed Items ({{ receipt.items|length }})
+                </h5>
+            </div>
+            <div class="card-body">
+                {% if receipt.items %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Item</th>
+                                    <th>Category</th>
+                                    <th class="text-center">Qty</th>
+                                    <th class="text-end">Unit Price</th>
+                                    <th class="text-end">Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in receipt.items %}
+                                <tr>
+                                    <td>
+                                        <strong>{{ item.name }}</strong>
+                                        {% if item.raw_line %}
+                                        <br><small class="text-muted">{{ item.raw_line[:50] }}{% if item.raw_line|length > 50 %}...{% endif %}</small>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-{{ get_category_color(item.category) }}">
+                                            {{ item.category|title }}
+                                        </span>
+                                    </td>
+                                    <td class="text-center">{{ item.quantity }}</td>
+                                    <td class="text-end">${{ "%.2f"|format(item.unit_price) }}</td>
+                                    <td class="text-end">
+                                        <strong>${{ "%.2f"|format(item.total_price) }}</strong>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                            <tfoot class="table-light">
+                                <tr>
+                                    <th colspan="4">Total</th>
+                                    <th class="text-end">${{ "%.2f"|format(receipt.total_amount) }}</th>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="text-center py-4">
+                        <i class="fas fa-exclamation-triangle fa-3x text-warning mb-3"></i>
+                        <h5>No items found</h5>
+                        <p class="text-muted">No items could be extracted from this receipt.</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        {% if receipt.items %}
+        <div class="card mt-4">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-chart-pie me-2"></i>Category Breakdown
+                </h5>
+            </div>
+            <div class="card-body">
+                <canvas id="categoryChart" width="400" height="200"></canvas>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <div class="col-lg-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-info-circle me-2"></i>Receipt Info
+                </h5>
+            </div>
+            <div class="card-body">
+                <dl class="row">
+                    <dt class="col-sm-5">Store:</dt>
+                    <dd class="col-sm-7">{{ receipt.store_name or 'Unknown' }}</dd>
+                    
+                    <dt class="col-sm-5">Upload Date:</dt>
+                    <dd class="col-sm-7">{{ receipt.upload_date[:19] if receipt.upload_date else 'Unknown' }}</dd>
+                    
+                    <dt class="col-sm-5">Items:</dt>
+                    <dd class="col-sm-7">{{ receipt.item_count }} items</dd>
+                    
+                    <dt class="col-sm-5">Total Amount:</dt>
+                    <dd class="col-sm-7">
+                        <strong>${{ "%.2f"|format(receipt.total_amount) }}</strong>
+                    </dd>
+                    
+                    <dt class="col-sm-5">File:</dt>
+                    <dd class="col-sm-7">
+                        <small class="text-muted">{{ receipt.filename.split('/')[-1] if receipt.filename else 'Unknown' }}</small>
+                    </dd>
+                </dl>
+            </div>
+        </div>
+
+        {% if receipt.items %}
+        <div class="card mt-4">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-tags me-2"></i>Category Summary
+                </h5>
+            </div>
+            <div class="card-body">
+                {% set category_totals = {} %}
+                {% for item in receipt.items %}
+                    {% set _ = category_totals.update({item.category: category_totals.get(item.category, 0) + item.total_price}) %}
+                {% endfor %}
+                
+                {% for category, total in category_totals.items() %}
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span class="badge bg-{{ get_category_color(category) }}">
+                        {{ category|title }}
+                    </span>
+                    <strong>${{ "%.2f"|format(total) }}</strong>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        {% if receipt.raw_text %}
+        <div class="card mt-4">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-file-alt me-2"></i>Raw OCR Text
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="raw-text-container">
+                    <pre class="small text-muted">{{ receipt.raw_text[:500] }}{% if receipt.raw_text|length > 500 %}...{% endif %}</pre>
+                </div>
+                {% if receipt.raw_text|length > 500 %}
+                <button class="btn btn-sm btn-outline-primary" onclick="toggleFullText()">
+                    <span id="toggleText">Show Full Text</span>
+                </button>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<style>
+.raw-text-container {
+    max-height: 200px;
+    overflow-y: auto;
+    background-color: #f8f9fa;
+    border-radius: 5px;
+    padding: 10px;
+}
+
+.raw-text-container pre {
+    margin-bottom: 0;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+</style>
+
+<script>
+// Category colors mapping
+function getCategoryColor(category) {
+    const colors = {
+        'fruits': 'danger',
+        'vegetables': 'success', 
+        'meat': 'warning',
+        'dairy': 'info',
+        'grains': 'primary',
+        'beverages': 'secondary',
+        'snacks': 'dark',
+        'frozen': 'light',
+        'pantry': 'success',
+        'canned_goods': 'warning',
+        'personal_care': 'info',
+        'household': 'primary',
+        'bakery': 'danger',
+        'other': 'secondary'
+    };
+    return colors[category] || 'secondary';
+}
+
+{% if receipt.items %}
+// Prepare data for chart
+const categoryData = {};
+{% for item in receipt.items %}
+    const category = '{{ item.category }}';
+    if (!categoryData[category]) {
+        categoryData[category] = 0;
+    }
+    categoryData[category] += {{ item.total_price }};
+{% endfor %}
+
+// Create chart
+const ctx = document.getElementById('categoryChart').getContext('2d');
+const chart = new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+        labels: Object.keys(categoryData).map(cat => cat.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())),
+        datasets: [{
+            data: Object.values(categoryData),
+            backgroundColor: [
+                '#e74c3c', '#27ae60', '#f39c12', '#3498db', '#9b59b6',
+                '#1abc9c', '#34495e', '#95a5a6', '#e67e22', '#d35400'
+            ],
+            borderWidth: 2,
+            borderColor: '#fff'
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                position: 'bottom'
+            },
+            tooltip: {
+                callbacks: {
+                    label: function(context) {
+                        const value = context.parsed;
+                        const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                        const percentage = ((value / total) * 100).toFixed(1);
+                        return context.label + ': $' + value.toFixed(2) + ' (' + percentage + '%)';
+                    }
+                }
+            }
+        }
+    }
+});
+{% endif %}
+
+function toggleFullText() {
+    const container = document.querySelector('.raw-text-container pre');
+    const button = document.getElementById('toggleText');
+    
+    if (container.textContent.includes('...')) {
+        container.textContent = `{{ receipt.raw_text|safe }}`;
+        button.textContent = 'Show Less';
+    } else {
+        container.textContent = `{{ receipt.raw_text[:500]|safe }}{% if receipt.raw_text|length > 500 %}...{% endif %}`;
+        button.textContent = 'Show Full Text';
+    }
+}
+</script>
+
+{# Template filter function for category colors #}
+{% set get_category_color = {
+    'fruits': 'danger',
+    'vegetables': 'success', 
+    'meat': 'warning',
+    'dairy': 'info',
+    'grains': 'primary',
+    'beverages': 'secondary',
+    'snacks': 'dark',
+    'frozen': 'light',
+    'pantry': 'success',
+    'canned_goods': 'warning',
+    'personal_care': 'info',
+    'household': 'primary',
+    'bakery': 'danger',
+    'other': 'secondary'
+}.get %}
+{% endblock %}
